@@ -1,0 +1,12 @@
+{
+  "name": "@taxi5/order-processor",
+  "dependencies": {
+    "amqplib": "registry:dt/amqplib#0.5.0+20170118062225",
+    "async": "registry:npm/async#2.0.1+20160815105832",
+    "debug": "registry:npm/debug#2.0.0+20170504163145",
+    "request": "registry:npm/request#2.69.0+20160428223725"
+  },
+  "globalDependencies": {
+    "node": "registry:dt/node#7.0.0+20170322231424"
+  }
+}
