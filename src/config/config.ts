@@ -4,6 +4,7 @@
 export default {
     rabbitmq: {
         url: 'amqp://localhost',
-        queue: 'orders'
+        queue: 'orders',
+        prefetch: 10,
     }
 };

@@ -12,7 +12,7 @@ export default class AMPQ extends Connector {
         channel.assertQueue(config.rabbitmq.queue, {
             durable: true
         });
-        channel.prefetch(10);
+        channel.prefetch(config.rabbitmq.prefetch);
 
         channel.consume(config.rabbitmq.queue, async (msg) => {
             try {
