@@ -1,53 +1,88 @@
+import Connect from './connect';
+const handler = (message) => {
+    console.log(message);
+    /*await process(payload);
 
+    orderpipe.push(payload);*/
+};
+
+new Connect(handler).init();
+
+
+
+import AMPQ from "./connectors/AMPQ";
+
+/*import AMPO from './connectors/AMPQ';
+
+const handler = (message) => {
+    console.log(message);
+    /!*await process(payload);
+
+    orderpipe.push(payload);*!/
+}
+const ampq = new AMPO(handler);
+ampq.connect();*/
+
+/*while(true) {
+    console.log(pipe.read());
+}*/
+/*pipe.push('{"id": 12}');
+pipe.push('{"id": 13}');
+pipe.push('{"id": 14}');
+pipe.push(null);
+console.log(pipe.read());
+console.log(pipe.read());
+console.log(pipe.read());*/
+/*
 import * as amqp from 'amqplib';
-import {AmqpOrder} from "./entity/Order";
-import * as stream from "stream";
-import { getRandomLocation } from './geo';
+import {order} from "./entity/order";
+//import * as stream from "stream";
+import { getrandomlocation } from './geo';
 
-import * as flow from "./flow";
+//import * as flow from "./flow";
 
 
 (async () => {
 
 	const connection = await amqp.connect('amqp://localhost');
-	const channel = await connection.createChannel();
+	const channel = await connection.createchannel();
 
-	channel.assertQueue('orders', {
+	channel.assertqueue('orders', {
 		durable: true
 	});
 	channel.prefetch(10);
 
 	channel.consume('orders', async (msg) => {
-
 		try {
-			const payload: AmqpOrder = JSON.parse(msg.content);
+			const payload: order = json.parse(msg.content);
+            console.log(payload);
+            /!*await process(payload);*!/
 
-			await process(payload);
-
-			//orderPipe.push(payload);
+			//orderpipe.push(payload);
 			channel.ack(msg);
 		} catch (err) {
 			channel.nack(msg);
 		}
 
-	}, { noAck: false});
+	}, { noack: false});
 
 
 	let id = 0;
-	setInterval(() => {
+	setinterval(() => {
 
-		const order: AmqpOrder = {
+		const order: order = {
 			id: ++id,
-			location: getRandomLocation()
+			location: getrandomlocation()
 		};
 
 	}, 1000)
 
 
-})();
+})();*/
 
+/*
 
-async function process(order: AmqpOrder): Promise<boolean> {
+async function process(order: Order): Promise<boolean> {
 
 	return new Promise<boolean>((res, rej) => {
 
@@ -107,4 +142,4 @@ async function process(order: AmqpOrder): Promise<boolean> {
 
 
 
-}
+}*/

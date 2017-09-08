@@ -2,7 +2,7 @@
 import { LocationInterface } from "../geo";
 
 
-export interface AmqpOrder {
+export interface Order {
 	id: number,
 	location: LocationInterface,
 	features?: {}
