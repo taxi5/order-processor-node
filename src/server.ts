@@ -1,4 +1,6 @@
 import Connect from './connect';
+
+/* TODO Separate system initalization from business logic, implement ConfigurationManager */
 const handler = (message) => {
     console.log(message);
     /*await process(payload);
@@ -7,6 +9,7 @@ const handler = (message) => {
 };
 
 new Connect(handler).init();
+
 
 
 

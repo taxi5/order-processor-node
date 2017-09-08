@@ -1,19 +1,20 @@
 import * as amqp from 'amqplib';
 import Connector from './connector'
 import { Order } from "../entity/Order";
+import config from '../config/config';
 
 export default class AMPQ extends Connector {
 
     async connect() {
-        const connection = await amqp.connect('amqp://localhost');
+        const connection = await amqp.connect(config.rabbitmq.url);
         const channel = await connection.createChannel();
 
-        channel.assertQueue('orders', {
+        channel.assertQueue(config.rabbitmq.queue, {
             durable: true
         });
         channel.prefetch(10);
 
-        channel.consume('orders', async (msg) => {
+        channel.consume(config.rabbitmq.queue, async (msg) => {
             try {
 
                 const order: Order = JSON.parse(msg.content);
