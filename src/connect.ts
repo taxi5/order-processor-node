@@ -1,18 +1,18 @@
 import Connectors from './connectors';
-import Connector from "./connectors/connector";
+import Connector from './entity/connector';
 
 export default class Connect {
-    private readonly connectors:Array<Connector>;
-    private readonly callback:(message)=>void;
+    private readonly connectors: Connector[];
+    private readonly callback: (message) => void;
 
-    constructor(callback:(message)=>void) {
+    constructor(callback: (message) => void) {
         this.callback = callback;
-        this.connectors = Connectors.map(connector => new connector(this.callback));
+        this.connectors = Connectors.map((connector) => new connector(this.callback));
     }
 
-    init() {
+    public init() {
         this.connectors.forEach((connector) => {
             connector.connect();
-        })
+        });
     }
 }

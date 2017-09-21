@@ -2,12 +2,15 @@
 * TODO separate dev and prod config
 * */
 export default {
-    rabbitmq: {
-        url: 'amqp://localhost',
-        queue: 'orders',
-        prefetch: 10,
-    },
     api: {
-        token: ''
-    }
+        token: '',
+    },
+    osrm: {
+        url: 'http://localhost:5000',
+    },
+    rabbitmq: {
+        prefetch: 10,
+        queue: 'orders',
+        url: 'amqp://localhost',
+    },
 };

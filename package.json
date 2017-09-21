@@ -19,9 +19,12 @@
   "homepage": "https://github.com/taxi5/order-processor-node#readme",
   "dependencies": {
     "amqplib": "^0.5.1",
-    "async": "^2.5.0",
     "debug": "^3.0.1",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4"
+  },
+  "devDependencies": {
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2"
   }
 }

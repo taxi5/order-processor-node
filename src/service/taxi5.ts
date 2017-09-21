@@ -96,7 +96,7 @@ export class VehicleSync {
 			return index;
 		}, {});
 
-		// index for licencePlate => controllerId
+		// index for licencePlate => id
 		this.indexByLicense = activeVehicles.reduce((index, info) => {
 			if (info.license_tax) {
 				index[info.license_tax] = info.controller_id;
