@@ -7,23 +7,29 @@
 import config from './config/config';
 import Connect from './connect';
 import { InterfaceOrder, InterfaceVehicleDistance, InterfaceVehicleLocation } from './entity/interfaces';
-import { VehicleSync } from './service/taxi5';
 import { OsrmClient } from './service/osrm';
+import { VehicleSync } from './service/taxi5';
+import { VehicleCollection } from './VehicleCollection';
 
 class App {
 
     private sync: VehicleSync;
     private osrm: OsrmClient;
     private connection: Connect;
-    private distances: InterfaceVehicleDistance[];
+    private vehicleCollection: VehicleCollection;
 
     public constructor() {
-        this.connection = new Connect((order: InterfaceOrder) => this.process(order));
         this.sync = new VehicleSync(config.api.token);
         this.osrm = new OsrmClient(config.osrm.url);
-        this.sync.synchronize();
+        this.vehicleCollection = new VehicleCollection(this.sync);
+    }
+
+    public async init() {
+        await this.sync.synchronize();
         this.sync.watch(10);
-        this.connection.init();
+        await this.vehicleCollection.load();
+        this.vehicleCollection.watch(3);
+        this.connection = new Connect((order: InterfaceOrder) => this.process(order)).init();
     }
 
     public async process(order: InterfaceOrder): Promise<boolean> {
@@ -33,10 +39,8 @@ class App {
             }, 1000);
 
             (async () => {
-                const controllerIds = this.getVehicleControllerIds();
-                const coordinates = await this.getVehicleCoordinates(controllerIds);
-                /*TODO Distance or arrival time? */
-                this.distances = await this.getVehicleDistancesTo(order, coordinates);
+                const vehicles = await this.vehicleCollection.getState();
+                const distances = await this.getVehicleDistancesTo(order, vehicles);
                 const mycar = await new Promise<number>((res) => {
 
                 });
@@ -47,41 +51,29 @@ class App {
         });
     }
 
-    private getVehicleControllerIds(): string[]{
-        const ids = this.sync.getVehicleIds();
-        return ids.map((id) => this.sync.findByVehicleId(id))
-            .filter((id) => id !== '0' && id !== 'test' && id !== 'a');
-    }
-
-    private async getVehicleCoordinates(controllerIds: string[]): Promise<InterfaceVehicleLocation[]> {
-        return controllerIds.map(((id) => {
-            const location = {
-                latitude: Math.random() * (53.972167 - 53.828164) + 53.828164,
-                longitude: Math.random() * (27.719198 - 27.400352) + 27.400352,
-            };
-            return ({id, ...location});
-        }));
-    }
-
-    private async getVehicleDistancesTo(order: InterfaceOrder, coordinates: InterfaceVehicleLocation[]): Promise<InterfaceVehicleDistance[]> {
+    private async getVehicleDistancesTo(order: InterfaceOrder,
+                                        coordinates: InterfaceVehicleLocation[]): Promise<InterfaceVehicleDistance[]> {
         return Promise.all(coordinates.map(async (vehicle) => {
             const from = {
-                lat: vehicle.latitude,
-                long: vehicle.longitude,
+                lat: vehicle.location.latitude,
+                long: vehicle.location.longitude,
             };
             const to = {
                 lat: order.location.latitude,
                 long: order.location.longitude,
             };
 
-            const response = await this.osrm.route([from, to]);
+            const { routes } = await this.osrm.route([from, to]);
+            const { distance, duration } = routes[0];
+            /* Consider rounding */
             /* TODO Always one route in response?*/
-            return {...vehicle, distance_km: response.routes[0].distance, eta_m: response.routes[0].distance};
+            return { ...vehicle, distance_km: distance / 1000, eta_m: duration / 60 };
         }));
     }
 }
 
 const app = new App();
+app.init();
 
 /*
 async function process(order: InterfaceOrder): Promise<boolean> {
@@ -112,17 +104,6 @@ async function process(order: InterfaceOrder): Promise<boolean> {
     });
 }
 
-const getVehicleDistances = (from, car): Promise<InterfaceVehicleDistance> => {
-    return new Promise((resolve, reject) => {
-        /!* TODO get vehicle location by id*!/
-        const location = {
-            latitude: Math.random() * (53.972167 - 53.828164) + 53.828164,
-            longitude: Math.random() * (27.719198 - 27.400352) + 27.400352,
-        };
-        return resolve({id, ...location});
-    });
-}
-
 const getVehicleCoordinatesBy = (id: string): Promise<InterfaceVehicleLocation> => {
     return new Promise((resolve, reject) => {
         /!* TODO get vehicle location by id*!/
@@ -136,7 +117,6 @@ const getVehicleCoordinatesBy = (id: string): Promise<InterfaceVehicleLocation> 
 
 
 */
-
 
 
 /*

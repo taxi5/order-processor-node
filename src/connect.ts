@@ -14,5 +14,7 @@ export default class Connect {
         this.connectors.forEach((connector) => {
             connector.connect();
         });
+
+        return this;
     }
 }

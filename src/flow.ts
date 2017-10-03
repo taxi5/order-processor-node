@@ -1,4 +1,5 @@
 
+/*
 
 import {LocationInterface} from "./geo";
 import { OsrmClient } from "./service/osrm";
@@ -16,6 +17,7 @@ export function getVehicles(): any[] {
 	const vehicles = ids.map((id) => sync.findByVehicleId(id));
 	return vehicles;
 }
+*/
 
 
 

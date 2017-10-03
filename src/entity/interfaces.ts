@@ -10,8 +10,9 @@ export interface InterfaceOrder {
     features?: {};
 }
 
-export interface InterfaceVehicleLocation extends InterfaceLocation {
+export interface InterfaceVehicleLocation {
     id: string;
+    location: InterfaceLocation;
 }
 
 export interface InterfaceVehicleDistance extends InterfaceVehicleLocation {
