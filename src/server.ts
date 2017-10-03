@@ -10,6 +10,7 @@ import { InterfaceOrder, InterfaceVehicleDistance, InterfaceVehicleLocation } fr
 import { OsrmClient } from './service/osrm';
 import { VehicleSync } from './service/taxi5';
 import { VehicleCollection } from './VehicleCollection';
+import Decision from './desicion';
 
 class App {
 
@@ -39,11 +40,10 @@ class App {
             }, 1000);
 
             (async () => {
-                const vehicles = await this.vehicleCollection.getState();
-                const distances = await this.getVehicleDistancesTo(order, vehicles);
-                const mycar = await new Promise<number>((res) => {
-
-                });
+                let vehicles = await this.vehicleCollection.getState();
+                vehicles = await this.calculateDistances(order, vehicles);
+                const decision = new Decision(vehicles);
+                const match = await decision.make(order);
                 clearTimeout(rejectTimeout);
             })();
         }).catch(() => {
@@ -51,8 +51,8 @@ class App {
         });
     }
 
-    private async getVehicleDistancesTo(order: InterfaceOrder,
-                                        coordinates: InterfaceVehicleLocation[]): Promise<InterfaceVehicleDistance[]> {
+    private async calculateDistances(order: InterfaceOrder,
+                                     coordinates: InterfaceVehicleLocation[]): Promise<InterfaceVehicleDistance[]> {
         return Promise.all(coordinates.map(async (vehicle) => {
             const from = {
                 lat: vehicle.location.latitude,
